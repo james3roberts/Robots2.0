@@ -10,12 +10,38 @@ ECHO = 18
 GPIO.setup(TRIG,GPIO.OUT)
 GPIO.setup(ECHO,GPIO.IN)
 
-#this does not seem to be doing the conversions so it will need to be changed
 def inches_to_16th(inches):
+    #convert inches to total 16ths
     total_16th = int(inches *16)
+
+    #get whole inches and the fractional part 
     whole_inches = total_16th//16
     fraction_16th = total_16th%16
+
+    #dictionary to map 16ths to corresponding fraction
+    fractions = {
+         2: "1/8",
+        4: "1/4",
+        6: "3/8",
+        8: "1/2",
+        10: "5/8",
+        12: "3/4",
+        14: "7/8"
+    }
+    
+    # Print the whole inches and the fraction if there is a fraction part
+    if fraction_16th in fractions:
+        print(f"{whole_inches} {fractions[fraction_16th]}")
+    else:
+        print(f"{whole_inches}")
+    
+    # Return whole inches and the fractional 16ths for further use if needed
     return whole_inches, fraction_16th
+
+# Example usage:
+inches_to_16th(2.375)  # Should print: 2 3/8
+
+    
 
 try:
     while True:
