@@ -1,32 +1,30 @@
+#I know that this doesnt work but maybe I will find a library that will
 import time
-from RPiStepper import RPiStepper   #import could not be resolved.
-
+import keyboard  # For detecting keypress
+from RPiStepper import RPiStepper
 
 # Define GPIO pins for the stepper motor
-control_pins = [7, 11, 13, 15]  # wiring based on how I wired the motor to the board. 
+control_pins = [7, 11, 13, 15]  # Adjust according to your wiring
 
 # Initialize the stepper motor
-stepper = RPiStepper(control_pins, mode="FULL")  # or "HALF" for half-stepping
+stepper = RPiStepper(control_pins, mode="FULL")
 
-# Function to rotate the stepper motor
-def rotate_stepper(steps, speed):
-    """
-    Rotates the stepper motor by a specified number of steps.
-    
-    :param steps: Number of steps to rotate (positive for clockwise, negative for counterclockwise)
-    :param speed: Speed of rotation in RPM
-    """
-    stepper.set_speed(speed)  # Set the speed of the motor
-    stepper.step(steps)  # Rotate the motor by the specified number of steps
+steps_moved = 0  # Track the total number of steps moved
 
 try:
-    # Rotate 32 steps (one full revolution for 28BYJ-48 motor) clockwise at 60 RPM
-    rotate_stepper(32, 60)
+    while not keyboard.is_pressed('s'):  # Press 's' to stop the motor
+        stepper.set_speed(60)  # Set speed in RPM
+        stepper.step(1)  # Rotate one step clockwise
+        steps_moved += 1  # Increment the step counter
 
-    time.sleep(1)  # Wait for a second
+    print(f"Motor stopped after {steps_moved} steps.")
 
-    # Rotate 16 steps counterclockwise at 30 RPM
-    rotate_stepper(-16, 30)
+    time.sleep(1)  # Wait for 1 second before returning
+
+    # Now move back the same number of steps in the opposite direction (counterclockwise)
+    print("Returning to the start position...")
+    stepper.set_speed(60)  # Set speed in RPM
+    stepper.step(-steps_moved)  # Rotate back by the same number of steps
 
 finally:
     # Cleanup GPIO when done
